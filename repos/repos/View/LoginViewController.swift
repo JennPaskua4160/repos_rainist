@@ -53,7 +53,7 @@ final class LoginViewController: UIViewController {
     func requestToken() -> Observable<String> {
         
         return Observable<String>.create {(observer) -> Disposable in
-            self.githubOAuth.authorize(withCallbackURL: URL(string: "reposApp://oauth-callback/github")!, scope: "user,repo", state: "state",
+            self.githubOAuth.authorize(withCallbackURL: URL(string: "reposApp://oauth-callback")!, scope: "user,repo", state: "state",
                                        success: { (credential, _, _) in
                                         let oauthToken = credential.oauthToken
                                         observer.onNext(oauthToken)

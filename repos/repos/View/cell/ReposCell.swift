@@ -9,7 +9,7 @@
 import UIKit
 import Kingfisher
 
-class ReposCell: UITableViewCell {
+final class ReposCell: UITableViewCell {
 
     @IBOutlet var squareIcon: UIView!
     @IBOutlet var title: UILabel!
@@ -18,17 +18,14 @@ class ReposCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         self.squareIcon.backgroundColor = .green
         self.title.text = "title"
         self.subTitle.text = "subTitle"
-        
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    func configure(cellData: Repo) {
+        self.title.text = cellData.repoFullName
+        self.subTitle.text = cellData.description
     }
 
 }

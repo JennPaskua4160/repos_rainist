@@ -251,6 +251,7 @@
                         <outlet property="forksButton" destination="xWd-1V-eni" id="q9N-it-yCH"/>
                         <outlet property="searchBar" destination="bCs-rg-nyr" id="XR8-0M-cOC"/>
                         <outlet property="starsButton" destination="4v5-tZ-Stv" id="y1k-lJ-HX3"/>
+                        <outlet property="table" destination="Dqx-QP-Viy" id="5n8-Qi-J8w"/>
                         <outlet property="updateButton" destination="pZU-Fg-ag9" id="NcR-Ks-4vT"/>
                     </connections>
                 </viewController>

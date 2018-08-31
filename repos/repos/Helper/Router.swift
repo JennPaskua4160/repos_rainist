@@ -15,11 +15,14 @@ public enum Router: URLRequestConvertible {
     }
     
     case user(String)
+    case repository(String, Int)
     
     var path: String {
         switch self {
         case .user(let username):
             return "users/\(username)"
+        case .repository:
+            return "search/repositories"
         }
     }
     
@@ -36,6 +39,8 @@ public enum Router: URLRequestConvertible {
         switch self {
         case .user:
             return [:]
+        case .repository(let query, let pageID):
+            return ["page": pageID, "per_page": 20, "q": "\(query)+language:Swift"]
         }
     }
     

@@ -16,6 +16,7 @@
 		0FFE8A4E2138CA07001391E3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFE8A4D2138CA07001391E3 /* SearchViewController.swift */; };
 		0FFE8A502138E463001391E3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFE8A4F2138E463001391E3 /* Router.swift */; };
 		0FFE8A522138E62F001391E3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFE8A512138E62F001391E3 /* User.swift */; };
+		0FFE8A552139111E001391E3 /* ReposCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFE8A542139111E001391E3 /* ReposCell.swift */; };
 		9BC299C69BF45E88AAA52810 /* Pods_repos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E95677BE1F620C90FAA177 /* Pods_repos.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		0FFE8A4D2138CA07001391E3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		0FFE8A4F2138E463001391E3 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		0FFE8A512138E62F001391E3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		0FFE8A542139111E001391E3 /* ReposCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReposCell.swift; sourceTree = "<group>"; };
 		26E95677BE1F620C90FAA177 /* Pods_repos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_repos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		844B7B0191845CAB1E40B6BC /* Pods-repos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-repos.release.xcconfig"; path = "Pods/Target Support Files/Pods-repos/Pods-repos.release.xcconfig"; sourceTree = "<group>"; };
 		FCE1DAC81C2A9A2705CEB5CB /* Pods-repos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-repos.debug.xcconfig"; path = "Pods/Target Support Files/Pods-repos/Pods-repos.debug.xcconfig"; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 		0FFE8A482138C988001391E3 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				0FFE8A5321391102001391E3 /* cell */,
 				0FFE8A372138BBAE001391E3 /* LoginViewController.swift */,
 				0FFE8A4B2138C9D9001391E3 /* ProfileViewController.swift */,
 				0FFE8A4D2138CA07001391E3 /* SearchViewController.swift */,
@@ -105,6 +108,14 @@
 				0FFE8A4F2138E463001391E3 /* Router.swift */,
 			);
 			path = Helper;
+			sourceTree = "<group>";
+		};
+		0FFE8A5321391102001391E3 /* cell */ = {
+			isa = PBXGroup;
+			children = (
+				0FFE8A542139111E001391E3 /* ReposCell.swift */,
+			);
+			path = cell;
 			sourceTree = "<group>";
 		};
 		A20D28E4EB71E1E34129FB8B /* Frameworks */ = {
@@ -249,6 +260,7 @@
 				0FFE8A502138E463001391E3 /* Router.swift in Sources */,
 				0FFE8A522138E62F001391E3 /* User.swift in Sources */,
 				0FFE8A4E2138CA07001391E3 /* SearchViewController.swift in Sources */,
+				0FFE8A552139111E001391E3 /* ReposCell.swift in Sources */,
 				0FFE8A362138BBAE001391E3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

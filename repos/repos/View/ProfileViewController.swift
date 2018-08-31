@@ -10,26 +10,21 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
 
+    @IBOutlet var userThumbnail: UIImageView!
+    @IBOutlet var userName: UILabel!
+    @IBOutlet var address: UILabel!
+    @IBOutlet var blog: UILabel!
+    @IBOutlet var email: UILabel!
+    
+    @IBOutlet var repositories: UILabel!
+    @IBOutlet var stars: UILabel!
+    @IBOutlet var followers: UILabel!
+    @IBOutlet var followings: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        //Todos: user api 부르기
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

@@ -17,13 +17,19 @@ final class SearchViewController: UIViewController {
     @IBOutlet var starsButton: UIButton!
     @IBOutlet var forksButton: UIButton!
     @IBOutlet var updateButton: UIButton!
+    @IBOutlet var table: UITableView!
     
+    let disposeBag: DisposeBag = DisposeBag()
+    var repos: [Repo] = [Repo]()
+    var totalCount: Int = 0
+    var pageId: Int = 1
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.createSearchBar()
         self.hideKeyboardWhenTappedAround()
         
-        //Todo: 현재 알파벳 하나씩 Repository api 호출하여 테이블뷰 갱신하도록 구현
+        //알파벳 하나씩 입력할 때마다 Repository api 호출하여 테이블뷰 갱신하도록 구현
         self.searchBar
             .rx
             .text
@@ -32,8 +38,24 @@ final class SearchViewController: UIViewController {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] query in
                 guard let `self` = self else { return }
-                //respositories 함수 호출 필요
-            })
+                
+                //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+                self.repos.removeAll()
+                //respositories 함수 호출
+                self.fetchRepositories(query: query,
+                                       pageId: self.pageId,
+                                       completion: { [weak self] (data) in
+                                        guard let `self` = self else { return }
+                                        guard let reposData = data else { return }
+                                        self.totalCount = reposData.totalCount
+                                        
+                                        for item in reposData.items {
+                                            self.repos.append(item)
+                                        }
+                                        
+                                        self.table.reloadData()
+                })
+            }).disposed(by: disposeBag)
     }
     
     //SearchBar 만드는 함수
@@ -42,15 +64,41 @@ final class SearchViewController: UIViewController {
         self.searchBar.returnKeyType = UIReturnKeyType.done
         self.searchBar.placeholder = "Search repository issue"
     }
+    
+    func fetchRepositories(query: String, pageId: Int, completion: @escaping (Repos?) -> Void) {
+        request(Router.repository(query, pageId)).responseJSON { response in
+            
+            guard response.result.isSuccess,
+                let _ = response.result.value else {
+                    print("Error while fetching repository: \(String(describing: response.result.error))")
+                    completion(nil)
+                    return
+            }
+            
+            let jsonData = response.data
+            
+            do {
+                let JSON = try JSONDecoder().decode(Repos.self, from: jsonData!)
+                completion(JSON)
+            }catch {
+                print("Error while fetching JSONDecoding\(error)")
+                completion(nil)
+            }
+        }
+    }
 }
 
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        guard !self.repos.isEmpty else { return 0 }
+        return self.repos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ReposCellID", for: indexPath) as! ReposCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ReposCellID", for: indexPath) as? ReposCell else { return UITableViewCell() }
+        guard !self.repos.isEmpty else { return UITableViewCell() }
+        
+        cell.configure(cellData: self.repos[indexPath.row])
         
         return cell
     }

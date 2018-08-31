@@ -31,3 +31,24 @@ struct User: Codable {
         case following
     }
 }
+
+struct Repos: Decodable {
+    var totalCount: Int
+    var items: [Repo]
+    
+    enum CodingKeys: String, CodingKey {
+        case totalCount = "total_count"
+        case items
+    }
+}
+
+struct Repo: Codable {
+    var repoFullName: String
+    var description: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case repoFullName = "full_name"
+        case description
+    }
+}
+

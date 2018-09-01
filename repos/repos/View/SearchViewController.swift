@@ -26,6 +26,7 @@ final class SearchViewController: UIViewController {
     var query: String = ""
     var currentSorting: String = "stars" {
         didSet {
+            // 쿼리문 업데이트 시 repository api 호출
             self.updateAfterGetData()
         }
     }
@@ -35,7 +36,7 @@ final class SearchViewController: UIViewController {
         self.createSearchBar()
         self.hideKeyboardWhenTappedAround()
         
-        //알파벳 하나씩 입력할 때마다 Repository api 호출하여 테이블뷰 갱신하도록 구현
+        //searchBar에 알파벳 입력시 Repository api 호출
         self.searchBar
             .rx
             .text
@@ -50,6 +51,7 @@ final class SearchViewController: UIViewController {
                 
             }).disposed(by: disposeBag)
         
+        //체크박스버튼 눌릴 때 sort쿼리값 변경
         self.starsButton
             .rx
             .tap
@@ -79,10 +81,11 @@ final class SearchViewController: UIViewController {
         self.searchBar.placeholder = "Search repository issue"
     }
     
+    // MARK: - repos 데이터 업데이트 및 테이블뷰 갱신
     func updateAfterGetData() {
         //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
         self.repos.removeAll()
-        //respositories 함수 호출
+        
         self.fetchRepositories(query: self.query,
                                sort: self.currentSorting,
                                pageId: self.pageId,
@@ -99,6 +102,7 @@ final class SearchViewController: UIViewController {
         })
     }
     
+    // MARK: - repository api 통신
     func fetchRepositories(query: String,
                            sort: String,
                            pageId: Int,
@@ -124,6 +128,7 @@ final class SearchViewController: UIViewController {
         }
     }
     
+    //체크박스버튼 눌리면 나머지 버튼 select 해제해주는 액션
     @IBAction func buttonClicked(_ sender: UIButton) {
         let buttonArray = [self.starsButton, self.forksButton, self.updateButton]
         buttonArray.forEach{
@@ -133,6 +138,7 @@ final class SearchViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDelegate, UITableViewDataSource
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard !self.repos.isEmpty else { return 0 }
@@ -149,7 +155,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: - UISearchBar 델리게이트 추가
+// MARK: - UISearchBarDelegate
 extension SearchViewController: UISearchBarDelegate {
     //done버튼 눌렀을 때 키보드 사라지게 하는 함수
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

@@ -27,15 +27,16 @@ final class SearchViewController: UIViewController {
     var currentSorting: String = "stars" {
         didSet {
             // 쿼리문 업데이트 시 repository api 호출
-            self.updateAfterGetData()
+            self.updateAfterGetRepo()
         }
     }
+    var refreshControl: UIRefreshControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.createSearchBar()
         self.hideKeyboardWhenTappedAround()
-        
+        self.setupPullToRefresh()
         //searchBar에 알파벳 입력시 Repository api 호출
         self.searchBar
             .rx
@@ -47,11 +48,12 @@ final class SearchViewController: UIViewController {
                 guard let `self` = self else { return }
                 self.query = query.lowercased()
                 
-                self.updateAfterGetData()
+                self.updateAfterGetRepo()
                 
             }).disposed(by: disposeBag)
         
         //체크박스버튼 눌릴 때 sort쿼리값 변경
+        self.starsButton.isSelected = true
         self.starsButton
             .rx
             .tap
@@ -81,8 +83,22 @@ final class SearchViewController: UIViewController {
         self.searchBar.placeholder = "Search repository issue"
     }
     
+    //Pull To Refresh 생성 함수
+    func setupPullToRefresh() {
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        self.table.addSubview(refreshControl)
+    }
+    
+    //User 정보 리프레시해주는 부분
+    @objc func didPullToRefresh() {
+        self.pageId = 1
+        self.updateAfterGetRepo()
+        refreshControl?.endRefreshing()
+    }
+    
     // MARK: - repos 데이터 업데이트 및 테이블뷰 갱신
-    func updateAfterGetData() {
+    func updateAfterGetRepo() {
         //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
         self.repos.removeAll()
         
@@ -97,7 +113,6 @@ final class SearchViewController: UIViewController {
                                 for item in reposData.items {
                                     self.repos.append(item)
                                 }
-                                
                                 self.table.reloadData()
         })
     }
@@ -107,7 +122,7 @@ final class SearchViewController: UIViewController {
                            sort: String,
                            pageId: Int,
                            completion: @escaping (Repos?) -> Void) {
-        request(Router.repository(query, sort, pageId)).responseJSON { response in
+        request(Router.repository(query: query, sorting: sort, pageId: pageId)).responseJSON { response in
             
             guard response.result.isSuccess,
                 let _ = response.result.value else {
@@ -152,6 +167,17 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configure(cellData: self.repos[indexPath.row])
         
         return cell
+    }
+    
+    // MARK: - Segues
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "showDetail" else { return }
+        guard let indexPath = table.indexPathForSelectedRow else { return }
+        guard !self.repos.isEmpty else { return }
+        
+        if let controller = segue.destination as? DetailViewController {
+            controller.detailRepo = self.repos[indexPath.row]
+        }
     }
 }
 

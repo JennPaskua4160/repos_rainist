@@ -9,13 +9,17 @@
 import Foundation
 import Alamofire
 
-public enum Router: URLRequestConvertible {
+public enum Router {
+    case user(username: String)
+    case repository(query: String, sorting: String, pageId: Int)
+    case starredRepository(username: String, pageId: Int)
+    case star(owner: String, repo: String)
+    case unStar(owner: String, repo: String)
+}
+extension Router: URLRequestConvertible {
     enum Constants {
         static let baseUrlString: String = "https://api.github.com"
     }
-    
-    case user(String)
-    case repository(String, String, Int)
     
     var path: String {
         switch self {
@@ -23,13 +27,26 @@ public enum Router: URLRequestConvertible {
             return "users/\(username)"
         case .repository:
             return "search/repositories"
+        case .starredRepository(let username):
+            return "users/\(username)/starred"
+        case .star(let owner, let repo):
+            return "user/starred/\(owner)/\(repo)"
+        case .unStar(let owner, let repo):
+            return "user/starred/\(owner)/\(repo)"
         }
     }
     
     var method: HTTPMethod {
-        return .get
+        switch self {
+        case .user, .repository, .starredRepository:
+            return .get
+        case .star:
+            return .put
+        case .unStar:
+            return .delete
+        }
     }
-
+    
     var url: URL {
         let url = try! Constants.baseUrlString.asURL()
         return url.appendingPathComponent(path)
@@ -37,10 +54,17 @@ public enum Router: URLRequestConvertible {
     
     var parameters: [String: Any] {
         switch self {
-        case .user:
+        case .user, .star, .unStar:
             return [:]
-        case .repository(let query, let sorting, let pageID):
-            return ["page": pageID, "q": query, "sort": sorting, "order": "asc"]
+        case .starredRepository(let pageId):
+            return ["page": pageId]
+        case .repository(let query , let sorting, let pageId):
+            return [
+                "q": query,
+                "sort": sorting,
+                "page": pageId,
+                "order": "asc"
+            ]
         }
     }
     
@@ -60,6 +84,12 @@ public enum Router: URLRequestConvertible {
         request.allHTTPHeaderFields = defaultHeaders
         request.timeoutInterval = TimeInterval(10 * 1000)
         
-        return try URLEncoding.default.encode(request, with: parameters)
+        switch self {
+        case .user, .repository, .starredRepository:
+            return try URLEncoding.default.encode(request, with: parameters)
+        case .star, .unStar:
+            return try JSONEncoding.default.encode(request, with: parameters)
+        }
+        
     }
 }

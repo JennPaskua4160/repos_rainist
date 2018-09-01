@@ -23,7 +23,13 @@ final class SearchViewController: UIViewController {
     var repos: [Repo] = [Repo]()
     var totalCount: Int = 0
     var pageId: Int = 1
-
+    var query: String = ""
+    var currentSorting: String = "stars" {
+        didSet {
+            self.updateAfterGetData()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.createSearchBar()
@@ -38,23 +44,31 @@ final class SearchViewController: UIViewController {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] query in
                 guard let `self` = self else { return }
+                self.query = query.lowercased()
                 
-                //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
-                self.repos.removeAll()
-                //respositories 함수 호출
-                self.fetchRepositories(query: query,
-                                       pageId: self.pageId,
-                                       completion: { [weak self] (data) in
-                                        guard let `self` = self else { return }
-                                        guard let reposData = data else { return }
-                                        self.totalCount = reposData.totalCount
-                                        
-                                        for item in reposData.items {
-                                            self.repos.append(item)
-                                        }
-                                        
-                                        self.table.reloadData()
-                })
+                self.updateAfterGetData()
+                
+            }).disposed(by: disposeBag)
+        
+        self.starsButton
+            .rx
+            .tap
+            .subscribe({ _ in
+                self.currentSorting = "stars"
+            }).disposed(by: disposeBag)
+        
+        self.forksButton
+            .rx
+            .tap
+            .subscribe({ _ in
+                self.currentSorting = "forks"
+            }).disposed(by: disposeBag)
+        
+        self.updateButton
+            .rx
+            .tap
+            .subscribe({ _ in
+                self.currentSorting = "updates"
             }).disposed(by: disposeBag)
     }
     
@@ -65,8 +79,31 @@ final class SearchViewController: UIViewController {
         self.searchBar.placeholder = "Search repository issue"
     }
     
-    func fetchRepositories(query: String, pageId: Int, completion: @escaping (Repos?) -> Void) {
-        request(Router.repository(query, pageId)).responseJSON { response in
+    func updateAfterGetData() {
+        //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+        self.repos.removeAll()
+        //respositories 함수 호출
+        self.fetchRepositories(query: self.query,
+                               sort: self.currentSorting,
+                               pageId: self.pageId,
+                               completion: { [weak self] (data) in
+                                guard let `self` = self else { return }
+                                guard let reposData = data else { return }
+                                self.totalCount = reposData.totalCount
+                                
+                                for item in reposData.items {
+                                    self.repos.append(item)
+                                }
+                                
+                                self.table.reloadData()
+        })
+    }
+    
+    func fetchRepositories(query: String,
+                           sort: String,
+                           pageId: Int,
+                           completion: @escaping (Repos?) -> Void) {
+        request(Router.repository(query, sort, pageId)).responseJSON { response in
             
             guard response.result.isSuccess,
                 let _ = response.result.value else {
@@ -85,6 +122,14 @@ final class SearchViewController: UIViewController {
                 completion(nil)
             }
         }
+    }
+    
+    @IBAction func buttonClicked(_ sender: UIButton) {
+        let buttonArray = [self.starsButton, self.forksButton, self.updateButton]
+        buttonArray.forEach{
+            $0?.isSelected = false
+        }
+        sender.isSelected = true
     }
 }
 

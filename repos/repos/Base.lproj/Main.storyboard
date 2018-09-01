@@ -69,16 +69,20 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n1G-kh-gZz">
                                                 <rect key="frame" x="0.0" y="0.0" width="125" height="75"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4v5-tZ-Stv">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4v5-tZ-Stv">
                                                         <rect key="frame" x="10" y="8" width="24" height="24"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" secondItem="4v5-tZ-Stv" secondAttribute="height" multiplier="1:1" id="FVW-Oq-d2z"/>
                                                             <constraint firstAttribute="width" constant="24" id="bEi-vg-Rh6"/>
                                                         </constraints>
-                                                        <state key="normal" title=" "/>
+                                                        <state key="normal" image="check_nor"/>
+                                                        <state key="selected" image="check_sel"/>
+                                                        <connections>
+                                                            <action selector="buttonClicked:" destination="2K4-k9-IH8" eventType="touchUpInside" id="GeM-6n-lJ2"/>
+                                                        </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stars" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZE-yC-bBS">
-                                                        <rect key="frame" x="42" y="10.5" width="56" height="20.5"/>
+                                                        <rect key="frame" x="42" y="9.5" width="56" height="20.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -103,13 +107,17 @@
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xWd-1V-eni">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xWd-1V-eni">
                                                         <rect key="frame" x="10" y="8" width="24" height="24"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="24" id="NQN-4F-heW"/>
                                                             <constraint firstAttribute="width" secondItem="xWd-1V-eni" secondAttribute="height" multiplier="1:1" id="yR9-24-eMb"/>
                                                         </constraints>
-                                                        <state key="normal" title=" "/>
+                                                        <state key="normal" title=" " image="check_nor"/>
+                                                        <state key="selected" image="check_sel"/>
+                                                        <connections>
+                                                            <action selector="buttonClicked:" destination="2K4-k9-IH8" eventType="touchUpInside" id="sBt-J0-jZ5"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -126,18 +134,22 @@
                                                 <rect key="frame" x="250" y="0.0" width="125" height="75"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Update" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gu4-JG-QN4">
-                                                        <rect key="frame" x="42" y="10" width="56.5" height="20.5"/>
+                                                        <rect key="frame" x="42" y="9.5" width="56.5" height="20.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pZU-Fg-ag9">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pZU-Fg-ag9">
                                                         <rect key="frame" x="10" y="8" width="24" height="24"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="24" id="2H5-8X-EpS"/>
                                                             <constraint firstAttribute="width" secondItem="pZU-Fg-ag9" secondAttribute="height" multiplier="1:1" id="jNq-iV-mZY"/>
                                                         </constraints>
-                                                        <state key="normal" title=" "/>
+                                                        <state key="normal" title=" " image="check_nor"/>
+                                                        <state key="selected" image="check_sel"/>
+                                                        <connections>
+                                                            <action selector="buttonClicked:" destination="2K4-k9-IH8" eventType="touchUpInside" id="W9t-FL-fec"/>
+                                                        </connections>
                                                     </button>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -521,4 +533,8 @@
             <point key="canvasLocation" x="2453.5999999999999" y="304.4977511244378"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="check_nor" width="152" height="155"/>
+        <image name="check_sel" width="152" height="155"/>
+    </resources>
 </document>

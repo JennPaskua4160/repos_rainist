@@ -206,11 +206,11 @@
                                                     <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Z4x-93-Lu3">
-                                                    <rect key="frame" x="340" y="30" width="20" height="20"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrow" translatesAutoresizingMaskIntoConstraints="NO" id="Z4x-93-Lu3">
+                                                    <rect key="frame" x="345" y="32.5" width="15" height="15"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="20" id="H3g-C0-IeO"/>
-                                                        <constraint firstAttribute="height" constant="20" id="izj-FR-d89"/>
+                                                        <constraint firstAttribute="width" constant="15" id="H3g-C0-IeO"/>
+                                                        <constraint firstAttribute="height" constant="15" id="izj-FR-d89"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -234,6 +234,7 @@
                                             <outlet property="squareIcon" destination="VUe-Qu-Js7" id="6u3-1I-SSk"/>
                                             <outlet property="subTitle" destination="q5a-Kw-L7Q" id="heH-Hk-LLd"/>
                                             <outlet property="title" destination="lRc-uj-rot" id="b0t-IV-S9a"/>
+                                            <segue destination="4Oe-2F-qiK" kind="show" id="qQm-03-irb"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -270,6 +271,30 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TvY-TD-oqF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3392.8000000000002" y="304.4977511244378"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="wt8-zq-Iha">
+            <objects>
+                <viewController id="4Oe-2F-qiK" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ZoA-cR-scl">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oAL-lE-VTH">
+                                <rect key="frame" x="166" y="323" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="BDE-Nb-ixl"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fjF-2H-6rA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4314" y="304"/>
         </scene>
         <!--Profile-->
         <scene sceneID="q75-Sv-ZRQ">
@@ -534,6 +559,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="arrow" width="100" height="100"/>
         <image name="check_nor" width="152" height="155"/>
         <image name="check_sel" width="152" height="155"/>
     </resources>

@@ -80,7 +80,7 @@ final class ProfileViewController: UIViewController {
     // MARK: - User api 호출하는 함수
     func requestUserInfo(username: String, completion: @escaping (User?) -> Void) {
         
-        request(Router.user(username)).responseJSON { response in
+        request(Router.user(username: username)).responseJSON { response in
             guard response.result.isSuccess,
                 let _ = response.result.value else {
                     print("Error while fetching userList: \(String(describing: response.result.error))")

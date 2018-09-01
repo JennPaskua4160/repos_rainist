@@ -30,7 +30,10 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()        
         self.setupPullToRefresh()
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         //TODO: user Api 요청할 때 UI그리는 속도개선필요.
         self.requestUserInfo(username: self.username) { [weak self] (data) in
             guard let `self` = self else { return }

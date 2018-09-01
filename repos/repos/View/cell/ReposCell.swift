@@ -19,13 +19,17 @@ final class ReposCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.squareIcon.backgroundColor = .green
-        self.title.text = "title"
-        self.subTitle.text = "subTitle"
+        self.title.text = ""
+        self.subTitle.text = ""
     }
 
     func configure(cellData: Repo) {
         self.title.text = cellData.repoFullName
         self.subTitle.text = cellData.description
     }
-
+    
+    override func prepareForReuse() {
+        self.title.text = ""
+        self.subTitle.text = ""
+    }
 }

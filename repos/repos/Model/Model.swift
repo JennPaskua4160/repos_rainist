@@ -10,6 +10,7 @@ import Foundation
 
 struct User: Codable {
     var avatarURL: URL?
+    var login: String?
     var name: String?
     var location: String?
     var blog: String?
@@ -20,6 +21,7 @@ struct User: Codable {
     
     enum CodingKeys: String, CodingKey {
         case avatarURL = "avatar_url"
+        case login
         case name
         case location
         case blog
@@ -40,11 +42,20 @@ struct Repos: Decodable {
     }
 }
 
+struct Owner: Codable {
+    var login: String
+}
+
 struct Repo: Codable {
+    var owner: Owner
+    var repoName: String
     var repoFullName: String
     var description: String?
     var starsCount: Int
+    
     enum CodingKeys: String, CodingKey {
+        case owner
+        case repoName = "name"
         case repoFullName = "full_name"
         case description
         case starsCount = "stargazers_count"

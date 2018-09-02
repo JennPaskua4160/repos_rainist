@@ -14,9 +14,11 @@ public enum Router {
     case repository(query: String, sorting: String, pageId: Int)
     case starredRepository(username: String, pageId: Int)
     case checkStarredRepos(owner: String, repo: String)
+    case getRepos(owner: String, repo: String)
     case star(owner: String, repo: String)
     case unStar(owner: String, repo: String)
 }
+
 extension Router: URLRequestConvertible {
     enum Constants {
         static let baseUrlString: String = "https://api.github.com"
@@ -32,6 +34,8 @@ extension Router: URLRequestConvertible {
             return "users/\(username)/starred"
         case .checkStarredRepos(let owner, let repo):
             return "user/starred/\(owner)/\(repo)"
+        case .getRepos(let owner, let repo):
+            return "repos/\(owner)/\(repo)"
         case .star(let owner, let repo):
             return "user/starred/\(owner)/\(repo)"
         case .unStar(let owner, let repo):
@@ -41,7 +45,7 @@ extension Router: URLRequestConvertible {
     
     var method: HTTPMethod {
         switch self {
-        case .user, .repository, .starredRepository, .checkStarredRepos:
+        case .user, .repository, .starredRepository, .checkStarredRepos, .getRepos:
             return .get
         case .star:
             return .put
@@ -57,7 +61,7 @@ extension Router: URLRequestConvertible {
     
     var parameters: [String: Any] {
         switch self {
-        case .user, .star, .unStar, .checkStarredRepos:
+        case .user, .star, .unStar, .checkStarredRepos, .getRepos:
             return [:]
         case .starredRepository(_, let pageId):
             return ["page": pageId, "per_page": 100000 ]
@@ -88,7 +92,7 @@ extension Router: URLRequestConvertible {
         request.timeoutInterval = TimeInterval(10 * 1000)
         
         switch self {
-        case .user, .starredRepository, .checkStarredRepos:
+        case .user, .starredRepository, .checkStarredRepos, .getRepos:
             return try URLEncoding.default.encode(request, with: parameters)
         case .repository:
             return try URLEncoding(arrayEncoding: .noBrackets).encode(request, with: parameters)

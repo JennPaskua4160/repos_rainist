@@ -60,7 +60,7 @@ extension Router: URLRequestConvertible {
             return ["page": pageId, "per_page": 100000 ]
         case .repository(let query , let sorting, let pageId):
             return [
-                "q": query,
+                "q": ["language:swift", query],
                 "sort": sorting,
                 "page": pageId,
                 "order": "asc"
@@ -85,9 +85,12 @@ extension Router: URLRequestConvertible {
         request.timeoutInterval = TimeInterval(10 * 1000)
         
         switch self {
-        case .user, .repository, .starredRepository:
+        case .user, .starredRepository:
             return try URLEncoding.default.encode(request, with: parameters)
+        case .repository:
+            return try URLEncoding(arrayEncoding: .noBrackets).encode(request, with: parameters)
         case .star, .unStar:
+            request.setValue("0", forHTTPHeaderField: "Content-Legth")
             return try JSONEncoding.default.encode(request, with: parameters)
         }
         

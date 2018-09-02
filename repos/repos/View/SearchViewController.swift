@@ -23,9 +23,12 @@ final class SearchViewController: UIViewController {
     var repos: [Repo] = [Repo]()
     var totalCount: Int = 0
     var pageId: Int = 1
+    var isLoading: Bool = false
     var query: String = ""
     var currentSorting: String = "stars" {
         didSet {
+            //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+            self.repos.removeAll()
             // 쿼리문 업데이트 시 repository api 호출
             self.updateAfterGetRepo()
         }
@@ -47,9 +50,9 @@ final class SearchViewController: UIViewController {
             .subscribe(onNext: { [weak self] query in
                 guard let `self` = self else { return }
                 self.query = query.lowercased()
-                
+                //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+                self.repos.removeAll()
                 self.updateAfterGetRepo()
-                
             }).disposed(by: disposeBag)
         
         //체크박스버튼 눌릴 때 sort쿼리값 변경
@@ -90,29 +93,32 @@ final class SearchViewController: UIViewController {
         self.table.addSubview(refreshControl)
     }
     
-    //User 정보 리프레시해주는 부분
+    //Repo 정보 리프레시
     @objc func didPullToRefresh() {
         self.pageId = 1
+        //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+        self.repos.removeAll()
         self.updateAfterGetRepo()
         refreshControl?.endRefreshing()
     }
     
     // MARK: - repos 데이터 업데이트 및 테이블뷰 갱신
     func updateAfterGetRepo() {
-        //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
-        self.repos.removeAll()
-        
+        self.isLoading = true
         self.fetchRepositories(query: self.query,
                                sort: self.currentSorting,
                                pageId: self.pageId,
                                completion: { [weak self] (data) in
                                 guard let `self` = self else { return }
                                 guard let reposData = data else { return }
+                                
                                 self.totalCount = reposData.totalCount
                                 
-                                for item in reposData.items {
-                                    self.repos.append(item)
+                                reposData.items.forEach {
+                                    self.repos.append( $0 )
                                 }
+                                
+                                self.isLoading = false
                                 self.table.reloadData()
         })
     }
@@ -146,9 +152,11 @@ final class SearchViewController: UIViewController {
     //체크박스버튼 눌리면 나머지 버튼 select 해제해주는 액션
     @IBAction func buttonClicked(_ sender: UIButton) {
         let buttonArray = [self.starsButton, self.forksButton, self.updateButton]
-        buttonArray.forEach{
+        
+        buttonArray.forEach {
             $0?.isSelected = false
         }
+        
         sender.isSelected = true
     }
 }
@@ -157,6 +165,7 @@ final class SearchViewController: UIViewController {
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard !self.repos.isEmpty else { return 0 }
+        
         return self.repos.count
     }
     
@@ -167,6 +176,25 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configure(cellData: self.repos[indexPath.row])
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == (self.repos.count - 1) {
+            if !isLoading, self.repos.count < self.totalCount {
+                
+                //loadMoreIndicator 마지막셀에 추가
+                let spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+                spinner.startAnimating()
+                spinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
+                self.table.tableFooterView = spinner
+                self.table.tableFooterView?.isHidden = false
+               
+                //페이징에 1카운트 추가 후에 repo 함수 호출 
+                self.pageId = self.pageId + 1
+                self.updateAfterGetRepo()
+                
+            }
+        }
     }
     
     // MARK: - Segues

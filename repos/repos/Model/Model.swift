@@ -15,7 +15,6 @@ struct User: Codable {
     var blog: String?
     var email: String?
     var repos: Int
-    var stars: Int
     var followers: Int
     var following: Int
     
@@ -26,7 +25,6 @@ struct User: Codable {
         case blog
         case email
         case repos = "public_repos"
-        case stars = "public_gists"
         case followers
         case following
     }

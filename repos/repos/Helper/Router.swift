@@ -27,7 +27,7 @@ extension Router: URLRequestConvertible {
             return "users/\(username)"
         case .repository:
             return "search/repositories"
-        case .starredRepository(let username):
+        case .starredRepository(let username, _):
             return "users/\(username)/starred"
         case .star(let owner, let repo):
             return "user/starred/\(owner)/\(repo)"
@@ -56,7 +56,7 @@ extension Router: URLRequestConvertible {
         switch self {
         case .user, .star, .unStar:
             return [:]
-        case .starredRepository(let pageId):
+        case .starredRepository(_, let pageId):
             return ["page": pageId]
         case .repository(let query , let sorting, let pageId):
             return [

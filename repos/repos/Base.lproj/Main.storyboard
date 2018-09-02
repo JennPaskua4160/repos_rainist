@@ -178,6 +178,11 @@
                                 <rect key="frame" x="0.0" y="195" width="375" height="423"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="hV7-QU-OkP">
+                                    <rect key="frame" x="0.0" y="108" width="375" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="ReposCellID" rowHeight="80" id="Hub-1Z-x28" customClass="ReposCell" customModule="repos" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="80"/>
@@ -298,14 +303,16 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gsl-MJ-3Nx">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gsl-MJ-3Nx">
                                 <rect key="frame" x="40" y="191" width="114" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="114" id="Juv-iQ-Uwc"/>
                                 </constraints>
-                                <state key="normal" title="Stars">
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title=" " image="stars_nor">
                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <state key="selected" image="stars_high"/>
                                 <connections>
                                     <action selector="starsButtonClicked:" destination="4Oe-2F-qiK" eventType="touchUpInside" id="0IQ-Wf-dth"/>
                                 </connections>
@@ -331,7 +338,7 @@
                         <outlet property="repoSubTitle" destination="7XC-Je-Gig" id="Ys6-9Z-Uhz"/>
                         <outlet property="repoTitle" destination="oAL-lE-VTH" id="t4k-Yr-seB"/>
                         <outlet property="starsButton" destination="Gsl-MJ-3Nx" id="Xb8-PN-zkO"/>
-                        <outlet property="starsCount" destination="Blu-M7-Xuv" id="Zt9-9l-c6p"/>
+                        <outlet property="starsCountTitle" destination="Blu-M7-Xuv" id="7N1-Bo-5Mc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fjF-2H-6rA" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -600,7 +607,7 @@
             </objects>
             <point key="canvasLocation" x="2409" y="304"/>
         </scene>
-        <!--Stars View Controller-->
+        <!--My Starred Repos-->
         <scene sceneID="DJL-mV-2JV">
             <objects>
                 <viewController id="bPv-iv-DWN" customClass="StarsViewController" customModule="repos" customModuleProvider="target" sceneMemberID="viewController">
@@ -612,8 +619,13 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="554"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="29b-5b-ozZ">
+                                    <rect key="frame" x="0.0" y="98" width="375" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </view>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="StarsCellID" rowHeight="70" id="YaV-5J-6zj" customClass="StarsCell" customModule="repos" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="StarsCellID" rowHeight="70" id="YaV-5J-6zj" customClass="StarsCell" customModule="repos" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="70"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="YaV-5J-6zj" id="Elk-OX-hfi">
@@ -670,7 +682,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Qlh-KS-0xU"/>
                     </view>
-                    <navigationItem key="navigationItem" id="gdc-iV-IyD"/>
+                    <navigationItem key="navigationItem" title="My Starred Repos" id="gdc-iV-IyD"/>
                     <connections>
                         <outlet property="table" destination="FRL-TR-Jol" id="zi8-vX-9Cu"/>
                     </connections>
@@ -703,5 +715,7 @@
         <image name="arrow" width="100" height="100"/>
         <image name="check_nor" width="152" height="155"/>
         <image name="check_sel" width="152" height="155"/>
+        <image name="stars_high" width="115" height="30"/>
+        <image name="stars_nor" width="115" height="30"/>
     </resources>
 </document>

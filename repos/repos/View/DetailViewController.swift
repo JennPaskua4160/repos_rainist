@@ -11,6 +11,7 @@ import Alamofire
 
 final class DetailViewController: UIViewController {
     
+    fileprivate let userName = "JennPaskua4160"
     @IBOutlet var repoTitle: UILabel!
     @IBOutlet var repoSubTitle: UILabel!
     @IBOutlet var starsCountTitle: UILabel!
@@ -63,8 +64,12 @@ final class DetailViewController: UIViewController {
     }
     
     // MARK: - starring repo api
+    
     func putStars() {
-        request(Router.star(owner: "JennPaskua4160", repo: "\(self.detailRepo?.repoFullName ?? "")")).responseJSON { response in
+        
+        request(Router.star(owner: self.userName,
+                            repo: "\(self.detailRepo?.repoFullName ?? "")")).responseJSON { response in
+                                
             guard response.result.error == nil else {
                 print("error calling PUT on current repo")
                 if let error = response.result.error {
@@ -78,7 +83,10 @@ final class DetailViewController: UIViewController {
     }
     // MARK: - unstarring repo api
     func deleteStars() {
-        request(Router.unStar(owner: "JennPaskua4160", repo: "\(self.detailRepo?.repoFullName ?? "")")).responseJSON { response in
+        
+        request(Router.unStar(owner: self.userName,
+                              repo: "\(self.detailRepo?.repoFullName ?? "")")).responseJSON { response in
+                                
             guard response.result.error == nil else {
                 print("error calling DELETE on current repo")
                 if let error = response.result.error {

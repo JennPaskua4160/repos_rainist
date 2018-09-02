@@ -11,7 +11,8 @@ import Kingfisher
 import Alamofire
 
 final class ProfileViewController: UIViewController {
-    let userName = "JennPaskua4160"
+   
+    fileprivate let userName = "JennPaskua4160"
     var user: User?
     var userRepos: [Repo] = [Repo]()
     
@@ -46,6 +47,7 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - User api 와 Repo api 호출 후 화면에 업데이트하는 함수
+    
     func fetchUserAndRepoData() {
         
         let group = DispatchGroup()
@@ -56,6 +58,7 @@ final class ProfileViewController: UIViewController {
             self.requestUserInfo(username: self.userName) { [weak self] (data) in
                 guard let `self` = self else { return }
                 guard let userData = data else { return }
+                
                 self.user = userData
                 
                 group.leave()
@@ -68,6 +71,7 @@ final class ProfileViewController: UIViewController {
             self.fetchMyStarredRepo(pageId: self.pageId) { [weak self] (data) in
                 guard let `self` = self else { return }
                 guard let reposData = data else { return }
+                
                 self.userRepos = reposData
         
                 group.leave()
@@ -76,6 +80,7 @@ final class ProfileViewController: UIViewController {
       
         group.notify(queue: DispatchQueue.global()) {
             guard let user = self.user else { return }
+            
             DispatchQueue.main.async {
                 self.updateUI(userData: user, repoCount: self.userRepos.count)
             }
@@ -89,7 +94,7 @@ final class ProfileViewController: UIViewController {
         self.scrollView.addSubview(refreshControl)
     }
     
-    //User 정보 리프레시
+    //UserAndRepo 정보 리프레시
     @objc func didPullToRefresh() {
         self.fetchUserAndRepoData()
         refreshControl?.endRefreshing()
@@ -121,6 +126,7 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - User api 호출하는 함수
+    
     func requestUserInfo(username: String, completion: @escaping (User?) -> Void) {
         
         request(Router.user(username: username)).responseJSON { response in
@@ -144,6 +150,7 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - starred repository list api
+    
     func fetchMyStarredRepo(pageId: Int, completion: @escaping ([Repo]?) -> Void) {
         
         request(Router.starredRepository(username: self.userName, pageId: pageId)).responseJSON { response in

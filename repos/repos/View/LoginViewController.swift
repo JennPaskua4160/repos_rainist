@@ -55,6 +55,7 @@ final class LoginViewController: UIViewController {
         return Observable<String>.create {(observer) -> Disposable in
             self.githubOAuth.authorize(withCallbackURL: URL(string: "reposApp://oauth-callback")!, scope: "user,repo", state: "state",
                                        success: { (credential, _, _) in
+                                        
                                         let oauthToken = credential.oauthToken
                                         observer.onNext(oauthToken)
                                         observer.onCompleted()

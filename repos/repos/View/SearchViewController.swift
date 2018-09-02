@@ -20,16 +20,20 @@ final class SearchViewController: UIViewController {
     @IBOutlet var table: UITableView!
     
     let disposeBag: DisposeBag = DisposeBag()
+    
     var repos: [Repo] = [Repo]()
+    
     var totalCount: Int = 0
     var pageId: Int = 1
     var isLoading: Bool = false
     var query: String = ""
+    
     var currentSorting: String = "stars" {
         didSet {
-            //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+            //함수 호출 전 기존 repos 데이터 삭제
             self.repos.removeAll()
-            // 쿼리문 업데이트 시 repository api 호출
+            
+            // currentSorting 값 변경 시 repos api 호출
             self.updateAfterGetRepo()
         }
     }
@@ -37,10 +41,12 @@ final class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.createSearchBar()
         self.hideKeyboardWhenTappedAround()
         self.setupPullToRefresh()
-        //searchBar에 알파벳 입력시 Repository api 호출
+        
+        //searchBar에 알파벳 입력시 repos api 호출
         self.searchBar
             .rx
             .text
@@ -49,14 +55,17 @@ final class SearchViewController: UIViewController {
             .distinctUntilChanged()
             .subscribe(onNext: { [weak self] query in
                 guard let `self` = self else { return }
+                
                 self.query = query.lowercased()
-                //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+                //함수 호출 전 기존 repos 데이터 삭제
                 self.repos.removeAll()
                 self.updateAfterGetRepo()
             }).disposed(by: disposeBag)
         
-        //체크박스버튼 눌릴 때 sort쿼리값 변경
+        //stars버튼 기본 선택되도록 함
         self.starsButton.isSelected = true
+        
+        //체크박스버튼 눌릴 때 currentSorting 값 변경
         self.starsButton
             .rx
             .tap
@@ -96,15 +105,18 @@ final class SearchViewController: UIViewController {
     //Repo 정보 리프레시
     @objc func didPullToRefresh() {
         self.pageId = 1
-        //함수 호출 전 기존에 저장되어있던 repos 데이터 삭제
+        
+        //함수 호출 전 기존 repos 데이터 삭제
         self.repos.removeAll()
         self.updateAfterGetRepo()
+        
         refreshControl?.endRefreshing()
     }
     
     // MARK: - repos 데이터 업데이트 및 테이블뷰 갱신
     func updateAfterGetRepo() {
         self.isLoading = true
+        
         self.fetchRepositories(query: self.query,
                                sort: self.currentSorting,
                                pageId: self.pageId,
@@ -128,7 +140,10 @@ final class SearchViewController: UIViewController {
                            sort: String,
                            pageId: Int,
                            completion: @escaping (Repos?) -> Void) {
-        request(Router.repository(query: query, sorting: sort, pageId: pageId)).responseJSON { response in
+        
+        request(Router.repository(query: query,
+                                  sorting: sort,
+                                  pageId: pageId)).responseJSON { response in
             
             guard response.result.isSuccess,
                 let _ = response.result.value else {
@@ -156,12 +171,12 @@ final class SearchViewController: UIViewController {
         buttonArray.forEach {
             $0?.isSelected = false
         }
-        
         sender.isSelected = true
     }
 }
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
+
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard !self.repos.isEmpty else { return 0 }
@@ -189,7 +204,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
                 self.table.tableFooterView = spinner
                 self.table.tableFooterView?.isHidden = false
                
-                //페이징에 1카운트 추가 후에 repo 함수 호출 
+                //pageId 1 증가 후에 repos api 호출
                 self.pageId = self.pageId + 1
                 self.updateAfterGetRepo()
                 
@@ -198,6 +213,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     // MARK: - Segues
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard segue.identifier == "showDetail" else { return }
         guard let indexPath = table.indexPathForSelectedRow else { return }
@@ -210,7 +226,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 // MARK: - UISearchBarDelegate
+
 extension SearchViewController: UISearchBarDelegate {
+    
     //done버튼 눌렀을 때 키보드 사라지게 하는 함수
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.searchBar.resignFirstResponder()

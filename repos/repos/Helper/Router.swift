@@ -57,7 +57,7 @@ extension Router: URLRequestConvertible {
         case .user, .star, .unStar:
             return [:]
         case .starredRepository(_, let pageId):
-            return ["page": pageId]
+            return ["page": pageId, "per_page": 100000 ]
         case .repository(let query , let sorting, let pageId):
             return [
                 "q": query,

@@ -13,8 +13,14 @@ final class DetailViewController: UIViewController {
     
     @IBOutlet var repoTitle: UILabel!
     @IBOutlet var repoSubTitle: UILabel!
-    @IBOutlet var starsCount: UILabel!
+    @IBOutlet var starsCountTitle: UILabel!
     @IBOutlet var starsButton: UIButton!
+    
+    var reposCount: Int = 0 {
+        didSet {
+            self.starsCountTitle.text = "\(reposCount)"
+        }
+    }
     
     var detailRepo: Repo? {
         didSet {
@@ -27,20 +33,18 @@ final class DetailViewController: UIViewController {
         
         if let repoTitle = repoTitle,
             let repoSubTitle = repoSubTitle,
-            let starsCount = starsCount {
+            let starsCountTitle = starsCountTitle {
             
             repoTitle.text = detailRepo.repoFullName
             repoSubTitle.text = detailRepo.description
-            starsCount.text = "\(detailRepo.starsCount)"
+            starsCountTitle.text = "\(detailRepo.starsCount)"
+            self.reposCount = detailRepo.starsCount
             title = detailRepo.repoFullName
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.starsButton.backgroundColor = .lightGray
-        self.starsButton.layer.cornerRadius = 5
-        
         configureView()
     }
     
@@ -48,17 +52,43 @@ final class DetailViewController: UIViewController {
         sender.isSelected = !sender.isSelected
         
         if sender.isSelected {
+            self.starsButton.isSelected = true
             self.putStars()
+            self.reposCount = self.reposCount + 1
         } else {
+            self.starsButton.isSelected = false
             self.deleteStars()
+            self.reposCount = self.reposCount - 1
         }
     }
     
     // MARK: - starring repo api
     func putStars() {
+        request(Router.star(owner: "JennPaskua4160", repo: "\(self.detailRepo?.repoFullName ?? "")")).responseJSON { response in
+            guard response.result.error == nil else {
+                print("error calling PUT on current repo")
+                if let error = response.result.error {
+                    print("Error: \(error)")
+                }
+                return
+            }
+            
+            print("PUT ok")
+        }
     }
     // MARK: - unstarring repo api
     func deleteStars() {
+        request(Router.unStar(owner: "JennPaskua4160", repo: "\(self.detailRepo?.repoFullName ?? "")")).responseJSON { response in
+            guard response.result.error == nil else {
+                print("error calling DELETE on current repo")
+                if let error = response.result.error {
+                    print("Error: \(error)")
+                }
+                return
+            }
+            
+            print("DELETE ok")
+        }
     }
 }
 

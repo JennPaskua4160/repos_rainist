@@ -88,6 +88,11 @@ final class SearchViewController: UIViewController {
             }).disposed(by: disposeBag)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        self.updateAfterGetRepo()
+    }
+    
     //SearchBar 만드는 함수
     func createSearchBar() {
         self.searchBar.delegate = self

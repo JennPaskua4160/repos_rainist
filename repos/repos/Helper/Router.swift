@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 
 public enum Router {
-    case user(username: String)
+    case user()
     case repository(query: String, sorting: String, pageId: Int)
     case starredRepository(username: String, pageId: Int)
     case checkStarredRepos(owner: String, repo: String)
@@ -26,19 +26,19 @@ extension Router: URLRequestConvertible {
     
     var path: String {
         switch self {
-        case .user(let username):
-            return "users/\(username)"
+        case .user:
+            return "user"
         case .repository:
             return "search/repositories"
-        case .starredRepository(let username, _):
+        case let .starredRepository(username, _):
             return "users/\(username)/starred"
-        case .checkStarredRepos(let owner, let repo):
+        case let .checkStarredRepos(owner, repo):
             return "user/starred/\(owner)/\(repo)"
-        case .getRepos(let owner, let repo):
+        case let .getRepos(owner, repo):
             return "repos/\(owner)/\(repo)"
-        case .star(let owner, let repo):
+        case let .star(owner, repo):
             return "user/starred/\(owner)/\(repo)"
-        case .unStar(let owner, let repo):
+        case let .unStar(owner, repo):
             return "user/starred/\(owner)/\(repo)"
         }
     }
@@ -63,9 +63,9 @@ extension Router: URLRequestConvertible {
         switch self {
         case .user, .star, .unStar, .checkStarredRepos, .getRepos:
             return [:]
-        case .starredRepository(_, let pageId):
+        case let .starredRepository(_, pageId):
             return ["page": pageId, "per_page": 100000 ]
-        case .repository(let query , let sorting, let pageId):
+        case let .repository(query , sorting, pageId):
             return [
                 "q": ["language:swift", query],
                 "sort": sorting,

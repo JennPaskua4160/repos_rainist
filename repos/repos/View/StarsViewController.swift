@@ -13,7 +13,12 @@ final class StarsViewController: UIViewController {
     
     @IBOutlet var table: UITableView!
     
-    fileprivate let userName: String = "JennPaskua4160"
+    var userName: String? {
+        get {
+            return UserDefaults.standard.string(forKey: "userName")
+        }
+    }
+    
     var pageId: Int = 1
     var repos: [Repo] = [Repo]()
     var refreshControl: UIRefreshControl!
@@ -45,8 +50,10 @@ final class StarsViewController: UIViewController {
     
     func updateAfterGetStarredRepo() {
         self.fetchMyStarredRepo() { [weak self] (data) in
-            guard let `self` = self else { return }
-            guard let reposData = data else { return }
+            guard
+                let `self` = self,
+                let reposData = data
+            else { return }
             
             self.repos = reposData
             self.title = "My Starred Repos [\(self.repos.count)]"
@@ -57,13 +64,16 @@ final class StarsViewController: UIViewController {
     // MARK: - starred repository list api
     
     func fetchMyStarredRepo(completion: @escaping ([Repo]?) -> Void) {
+        guard let userName = self.userName else { return }
         
-        request(Router.starredRepository(username: self.userName,
+        request(Router.starredRepository(username: userName,
                                          pageId: self.pageId)).responseJSON { response in
                                             
-            guard response.result.isSuccess,
-                let _ = response.result.value else {
-                    print("Error while fetching repository: \(String(describing: response.result.error))")
+            guard
+                response.result.isSuccess,
+                let _ = response.result.value
+            else {
+                    print("Error repository: \(String(describing: response.result.error))")
                     completion(nil)
                     return
             }
@@ -84,25 +94,33 @@ final class StarsViewController: UIViewController {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 
 extension StarsViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection
+        section: Int) -> Int {
         guard !self.repos.isEmpty else { return 0 }
         return self.repos.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "StarsCellID", for: indexPath) as? StarsCell else { return UITableViewCell() }
-        guard !self.repos.isEmpty else { return UITableViewCell() }
+    func tableView(_ tableView: UITableView, cellForRowAt
+        indexPath: IndexPath) -> UITableViewCell {
+        
+        guard
+            !self.repos.isEmpty,
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StarsCellID",
+                                                     for: indexPath) as? StarsCell
+        else { return UITableViewCell() }
         
         cell.configure(cellData: self.repos[indexPath.row])
         
         return cell
     }
     
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt
+        indexPath: IndexPath) -> CGFloat {
         return 50
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt
+        indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
 }

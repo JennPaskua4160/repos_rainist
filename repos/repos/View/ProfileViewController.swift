@@ -11,10 +11,16 @@ import Kingfisher
 import Alamofire
 
 final class ProfileViewController: UIViewController {
-   
-    fileprivate let userName = "JennPaskua4160"
-    var user: User?
-    var userRepos: [Repo] = [Repo]()
+    
+    var userName: String? {
+        get {
+            let userName = UserDefaults.standard.string(forKey: "userName")
+            return userName
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "userName")
+        }
+    }
     
     @IBOutlet var userThumbnail: UIImageView!
     @IBOutlet var name: UILabel!
@@ -50,39 +56,26 @@ final class ProfileViewController: UIViewController {
     
     func fetchUserAndRepoData() {
         
-        let group = DispatchGroup()
-        
-        group.enter()
-        DispatchQueue.global().async {
-            //user api
-            self.requestUserInfo(username: self.userName) { [weak self] (data) in
-                guard let `self` = self else { return }
-                guard let userData = data else { return }
-                
-                self.user = userData
-                
-                group.leave()
-            }
-        }
-        
-        group.enter()
-        DispatchQueue.global().async {
-            //starred repo api
-            self.fetchMyStarredRepo(pageId: self.pageId) { [weak self] (data) in
-                guard let `self` = self else { return }
-                guard let reposData = data else { return }
-                
-                self.userRepos = reposData
-        
-                group.leave()
-            }
-        }
-      
-        group.notify(queue: DispatchQueue.global()) {
-            guard let user = self.user else { return }
+        //user api
+        self.requestUserInfo() { [weak self] (userData) in
+            guard
+                let `self` = self,
+                let userData = userData,
+                let userName = userData.login
+            else { return }
             
-            DispatchQueue.main.async {
-                self.updateUI(userData: user, repoCount: self.userRepos.count)
+            //userDefaults에 userName저장
+            self.userName = userName
+            
+            //starred repo api
+            self.fetchMyStarredRepo(userName: self.userName ?? "",
+                                    pageId: self.pageId) { [weak self] (repoData) in
+                                        guard
+                                            let `self` = self,
+                                            let repoData = repoData
+                                        else { return }
+                                        
+                                        self.updateUI(userData: userData, repoCount: repoData.count)
             }
         }
     }
@@ -127,22 +120,25 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - User api 호출하는 함수
     
-    func requestUserInfo(username: String, completion: @escaping (User?) -> Void) {
+    func requestUserInfo(completion: @escaping (User?) -> Void) {
         
-        request(Router.user(username: username)).responseJSON { response in
-            guard response.result.isSuccess,
-                let _ = response.result.value else {
-                    print("Error while fetching userList: \(String(describing: response.result.error))")
+        request(Router.user()).responseJSON { response in
+            
+            guard
+                response.result.isSuccess,
+                let _ = response.result.value
+            else {
+                    print("Error while fetching user: \(String(describing: response.result.error))")
                     completion(nil)
                     return
             }
             
             let jsonData = response.data
             
-            do{
+            do {
                 let JSON = try JSONDecoder().decode(User.self, from: jsonData!)
                 completion(JSON)
-            } catch{
+            } catch {
                 print("error \(error)")
                 completion(nil)
             }
@@ -151,25 +147,31 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - starred repository list api
     
-    func fetchMyStarredRepo(pageId: Int, completion: @escaping ([Repo]?) -> Void) {
+    func fetchMyStarredRepo(userName: String,
+                            pageId: Int,
+                            completion: @escaping ([Repo]?) -> Void) {
         
-        request(Router.starredRepository(username: self.userName, pageId: pageId)).responseJSON { response in
-            guard response.result.isSuccess,
-                let _ = response.result.value else {
-                    print("Error while fetching repository: \(String(describing: response.result.error))")
-                    completion(nil)
-                    return
-            }
-            
-            let jsonData = response.data
-            
-            do {
-                let JSON = try JSONDecoder().decode([Repo].self, from: jsonData!)
-                completion(JSON)
-            }catch {
-                print("Error while fetching JSONDecoding\(error)")
-                completion(nil)
-            }
+        request(Router.starredRepository(username: userName,
+                                         pageId: pageId)).responseJSON { response in
+                                            
+                                            guard
+                                                response.result.isSuccess,
+                                                let _ = response.result.value
+                                            else {
+                                                    print("Error while fetching repository count: \(String(describing: response.result.error))")
+                                                    completion(nil)
+                                                    return
+                                            }
+                                            
+                                            let jsonData = response.data
+                                            
+                                            do {
+                                                let JSON = try JSONDecoder().decode([Repo].self, from: jsonData!)
+                                                completion(JSON)
+                                            } catch {
+                                                print("Error while fetching JSONDecoding\(error)")
+                                                completion(nil)
+                                            }
         }
     }
 }

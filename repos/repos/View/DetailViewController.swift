@@ -51,8 +51,14 @@ final class DetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.checkIfStarredRepos()
-        self.getRepos { (data) in
-            self.starCount = data?.starsCount ?? 0
+        self.getRepos { [weak self] (repoData) in
+            
+            guard
+                let `self` = self,
+                let repoData = repoData
+            else { return }
+            
+            self.starCount = repoData.starsCount
         }
     }
     
@@ -72,9 +78,11 @@ final class DetailViewController: UIViewController {
         request(Router.getRepos(owner: detailRepo.owner.login,
                                 repo: detailRepo.repoName)).responseJSON { response in
                                     
-                                    guard response.result.isSuccess,
-                                        let _ = response.result.value else {
-                                            print("Error while fetching repository: \(String(describing: response.result.error))")
+                                    guard
+                                        response.result.isSuccess,
+                                        let _ = response.result.value
+                                    else {
+                                            print("Error repository: \(String(describing: response.result.error))")
                                             completion(nil)
                                             return
                                     }
@@ -113,9 +121,10 @@ final class DetailViewController: UIViewController {
     // MARK: - starring repo api
     
     func putStars() {
+        guard let detailRepo = detailRepo else { return }
         
-        request(Router.star(owner: self.detailRepo?.owner.login ?? "",
-                            repo: self.detailRepo?.repoName ?? "")).response { response in
+        request(Router.star(owner: detailRepo.owner.login,
+                            repo: detailRepo.repoName)).response { response in
                                 
                                 switch (response.response?.statusCode) {
                                 case 204:
@@ -134,9 +143,10 @@ final class DetailViewController: UIViewController {
     // MARK: - unstarring repo api
     
     func deleteStars() {
+        guard let detailRepo = detailRepo else { return }
         
-        request(Router.unStar(owner: self.detailRepo?.owner.login ?? "",
-                              repo: self.detailRepo?.repoName ?? "")).response { response in
+        request(Router.unStar(owner: detailRepo.owner.login,
+                              repo: detailRepo.repoName)).response { response in
                                 
                                 switch (response.response?.statusCode) {
                                 case 204:

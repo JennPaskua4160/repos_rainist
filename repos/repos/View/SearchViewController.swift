@@ -57,9 +57,11 @@ final class SearchViewController: UIViewController {
                 guard let `self` = self else { return }
                 
                 self.query = query.lowercased()
+                
                 //함수 호출 전 기존 repos 데이터 삭제
                 self.repos.removeAll()
                 self.updateAfterGetRepo()
+                
             }).disposed(by: disposeBag)
         
         //stars버튼 기본 선택되도록 함
@@ -103,7 +105,9 @@ final class SearchViewController: UIViewController {
     //Pull To Refresh 생성 함수
     func setupPullToRefresh() {
         refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh),
+                                 for: .valueChanged)
+        
         self.table.addSubview(refreshControl)
     }
     
@@ -126,8 +130,11 @@ final class SearchViewController: UIViewController {
                                sort: self.currentSorting,
                                pageId: self.pageId,
                                completion: { [weak self] (data) in
-                                guard let `self` = self else { return }
-                                guard let reposData = data else { return }
+                                
+                                guard
+                                    let `self` = self,
+                                    let reposData = data
+                                else { return }
                                 
                                 self.totalCount = reposData.totalCount
                                 
@@ -150,9 +157,11 @@ final class SearchViewController: UIViewController {
                                   sorting: sort,
                                   pageId: pageId)).responseJSON { response in
             
-            guard response.result.isSuccess,
-                let _ = response.result.value else {
-                    print("Error while fetching repository: \(String(describing: response.result.error))")
+            guard
+                response.result.isSuccess,
+                let _ = response.result.value
+            else {
+                    print("Error repository: \(String(describing: response.result.error))")
                     completion(nil)
                     return
             }
@@ -162,7 +171,7 @@ final class SearchViewController: UIViewController {
             do {
                 let JSON = try JSONDecoder().decode(Repos.self, from: jsonData!)
                 completion(JSON)
-            }catch {
+            } catch {
                 print("Error while fetching JSONDecoding\(error)")
                 completion(nil)
             }
@@ -183,36 +192,47 @@ final class SearchViewController: UIViewController {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection
+        section: Int) -> Int {
         guard !self.repos.isEmpty else { return 0 }
-        
         return self.repos.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ReposCellID", for: indexPath) as? ReposCell else { return UITableViewCell() }
-        guard !self.repos.isEmpty else { return UITableViewCell() }
+    func tableView(_ tableView: UITableView, cellForRowAt
+        indexPath: IndexPath) -> UITableViewCell {
+        
+        guard
+            !self.repos.isEmpty,
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReposCellID",
+                                                     for: indexPath) as? ReposCell
+        else { return UITableViewCell() }
         
         cell.configure(cellData: self.repos[indexPath.row])
         
         return cell
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, willDisplay
+        cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
         if indexPath.row == (self.repos.count - 1) {
             if !isLoading, self.repos.count < self.totalCount {
                 
                 //loadMoreIndicator 마지막셀에 추가
                 let spinner = UIActivityIndicatorView(activityIndicatorStyle: .gray)
                 spinner.startAnimating()
-                spinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
+                spinner.frame = CGRect(x: CGFloat(0),
+                                       y: CGFloat(0),
+                                       width: tableView.bounds.width,
+                                       height: CGFloat(44))
+                
                 self.table.tableFooterView = spinner
                 self.table.tableFooterView?.isHidden = false
                
                 //pageId 1 증가 후에 repos api 호출
                 self.pageId = self.pageId + 1
                 self.updateAfterGetRepo()
-                
             }
         }
     }
@@ -220,9 +240,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     // MARK: - Segues
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == "showDetail" else { return }
-        guard let indexPath = table.indexPathForSelectedRow else { return }
-        guard !self.repos.isEmpty else { return }
+        
+        guard
+            segue.identifier == "showDetail",
+            let indexPath = table.indexPathForSelectedRow,
+            !self.repos.isEmpty
+        else { return }
         
         if let controller = segue.destination as? DetailViewController {
             controller.detailRepo = self.repos[indexPath.row]
@@ -241,7 +264,8 @@ extension SearchViewController: UISearchBarDelegate {
     
     //화면 탭하면 키보드 사라지게 하는 함수
     func hideKeyboardWhenTappedAround() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action:    #selector(SearchViewController.dismissKeyboard))
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(SearchViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }

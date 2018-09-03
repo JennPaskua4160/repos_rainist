@@ -19,8 +19,8 @@ final class StarsCell: UITableViewCell {
     }
     
     func configure(cellData: Repo) {
-        self.repoTitle.text = cellData.repoFullName ?? ""
-        self.repoSubTitle.text = cellData.description ?? ""
+        self.repoTitle.text = cellData.repoFullName
+        self.repoSubTitle.text = cellData.description
     }
     
 }
